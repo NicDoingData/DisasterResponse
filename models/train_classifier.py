@@ -1,3 +1,4 @@
+#import packages
 import sys
 import pandas as pd 
 import numpy as np
@@ -17,16 +18,40 @@ from sklearn.metrics import classification_report
 nltk.download(['punkt','wordnet', 'stopwords'])
 
 def load_data(database_filepath):
+    """
+    A function to read in the data from the filepath.
+    INPUT: 
+    database_filepath - string filepath to the database containing the data
+    
+    OUTPUT: 
+    X - Series containing the messages
+    Y - df containing the labels
+    category_names - list of category labels
+    """
+    # Create the engine and read in the df from the database 
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table(table_name = database_filepath, con = engine)
+    
+    # Split the df into X series & Y df
     X = df.iloc[:,1]
     Y = df.iloc[:,4:]
+    
+    # Extract the category names from the column labels
     category_names = Y.columns
+    
     return X, Y, category_names
     pass
 
 
 def tokenize(text):
+    """
+    A function to normalise, strip, tokenize, stop-word clean & lemmatize the input text
+    INPUT:
+    text - string object
+    
+    OUTPUT:
+    text - tokenized string object
+    """
     #normalize text
     text = text.lower()
     #remove non-letter symbols
@@ -43,9 +68,17 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    A function to build the model pipeline
+    OUTPUT:
+    model - pipeline object
+    """
     model = Pipeline([
+        # add the count vectorizer
         ('CountVect', CountVectorizer(tokenize)),
+        # add the TFidf transformer
         ('tfidf', TfidfTransformer()),
+        # add Random Forest Classifier
         ('clf', MultiOutputClassifier(estimator = RandomForestClassifier()))
     ])
     return model
@@ -53,6 +86,11 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    A function to test model performance.
+    INPUT:
+    
+   
     Y_pred = model.predict(X_test)
     Y_pred_df = pd.DataFrame(data = Y_pred, index = X_test.index, columns = Y_test.columns)
     columns = Y_test.columns
