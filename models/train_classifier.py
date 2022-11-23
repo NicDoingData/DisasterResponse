@@ -89,10 +89,22 @@ def evaluate_model(model, X_test, Y_test, category_names):
     """
     A function to test model performance.
     INPUT:
+    model - the pipeline or estimator object fitted before
+    X_test - df or similar holding the messages for testing
+    Y_test - df containing the category labels corresponding to X_test
+    category_names - list of category names 
     
-   
+    OUTPUT:
+    Printed performance summary
+    """
+    
+   # Create model predictions
     Y_pred = model.predict(X_test)
+    
+    #Organise predictions in a dataframe
     Y_pred_df = pd.DataFrame(data = Y_pred, index = X_test.index, columns = Y_test.columns)
+    
+    #Iterate over columns and print performance summaries
     columns = Y_test.columns
 
     for col in columns:
@@ -102,6 +114,17 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """ 
+    A function to save the model to a pickle file
+    
+    INPUT:
+    model - pipeline or estimator object to be saved
+    model_filepath - the path to which the pickle file wil be saved
+    
+    OUTPUT:
+    Pickle file of model in filepath
+    """
+    #open filepath and save model as pickle file
     with open(model_filepath, 'wb') as f:
         classifier = pickle.dump(model, f)
     pass
