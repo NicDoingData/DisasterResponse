@@ -73,14 +73,25 @@ def build_model():
     OUTPUT:
     model - pipeline object
     """
-    model = Pipeline([
+    pipeline = Pipeline([
         # add the count vectorizer
         ('CountVect', CountVectorizer(tokenize)),
         # add the TFidf transformer
         ('tfidf', TfidfTransformer()),
         # add Random Forest Classifier
         ('clf', MultiOutputClassifier(estimator = RandomForestClassifier()))
-    ])
+        ])
+
+    parameters = {
+        # Commented out to reduce run-time; even with just 1 parameter included workspace times out before GridSearch is complete; 
+        #'CountVect__ngram_range': ((1, 1), (1, 2)),
+        #'clf__estimator__n_estimators': [50, 100],
+        #'clf__estimator__min_samples_split': [2,3],
+        #'clf__estimator__criterion': ['gini','entropy', 'log_loss']
+    }
+
+    model = GridSearchCV(pipeline, param_grid=parameters)
+    print(model.get_params())
     return model
     pass
 
