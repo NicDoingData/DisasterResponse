@@ -1,3 +1,7 @@
+## General Project Description
+This project provides code for a web app classifying disaster response messages.
+![image](https://user-images.githubusercontent.com/110040452/203553405-4e2f6176-0be8-4a35-bb8f-4a4c6768a338.png)
+
 ## Installations
 
 The code was written using python 3 and html. Any other necessary libraries are being loaded / installed in the code.
