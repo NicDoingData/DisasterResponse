@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Pie
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -15,6 +15,13 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    """
+    Function to tokenize input text
+    INPUT
+    text - string
+    OUTPUT
+    clean_tokens - list of clean tokens of text
+    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -42,28 +49,45 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+    categories = df.iloc[:,4:]
+    category_labels = categories.columns
+    category_counts = categories.sum(axis=0)
     
+        
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
-                Bar(
-                    x=genre_names,
-                    y=genre_counts
-                )
+                Pie(
+                    labels= genre_names,
+                    values=genre_counts
+                ),
+              
             ],
 
             'layout': {
                 'title': 'Distribution of Message Genres',
+                },
+                
+            
+        },
+      { 'data': [
+          Bar(
+                    x = category_labels,
+                    y= category_counts
+                ),
+            ],
+         'layout': {
+             'title': 'Distribution of Message Categories',
                 'yaxis': {
                     'title': "Count"
                 },
                 'xaxis': {
-                    'title': "Genre"
-                }
+                    'title': "Category"
             }
-        }
+         }
+      }
     ]
     
     # encode plotly graphs in JSON
